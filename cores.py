@@ -27,9 +27,8 @@ new_graph = Graph(parse=\"C:\\\\yourgraph.txt\")""")
 		elif graph != None:
 			if ((isinstance(graph, dict) and len(graph)>0) and
 				all(isinstance(graph[n], dict) and (re.fullmatch(r"\d+(\-\d+)*", n)) for n in graph) and
-				all(((m in graph) and isinstance(m, set) and len(m)>0) for n in graph for m in graph[n]) and
-				all((isinstance(k, str) and re.fullmatch(r"[A-Z]", k)) for n in graph for m in graph[n] for l in graph[n][m] for k in l) and
-				all(m in graph for n in graph for m in graph[n])):
+				all((m in graph) and (isinstance(graph[n][m], set) and len(m)>0) for n in graph for m in graph[n]) and
+				all((isinstance(k, str) and re.fullmatch(r"[A-Z]", k)) for n in graph for m in graph[n] for l in graph[n][m] for k in l)):
 				self.graph = copy.deepcopy(graph)
 			else:
 				raise Exception("""The graph parameter should only be used to copy other preexisting Graphs. E.g.:
