@@ -205,32 +205,20 @@ new_graph = Graph(gen=(8,2,1.1))""")
 		tempfile = TemporaryFile(mode="w+")
 
 		for n in self.graph:
-			tempfile.write("(\n\t(")
+			tempfile.write("(\n")
 			for i,m in enumerate(self.graph):
-				if not m == n:
-					tempfile.write("!.@"+n+"_@"+m)
-				else:
-					tempfile.write(".@"+n+"_@"+m)
-				if not i+1 == len(self.graph):
-					tempfile.write(" & ")
-			tempfile.write(") |\n\t(\n\t\t(\n")
-			for i,m in enumerate([m for m in self.graph if m != n]):
-				tempfile.write("\t\t\t(")
+				tempfile.write("\t(")
 				for j,l in enumerate(self.graph):
-					if not l == m:
-						tempfile.write("!.@"+n+"_@"+l)
+					if not m==l:
+						tempfile.write("!.@"+str(n)+"_@"+str(l))
 					else:
-						tempfile.write(".@"+n+"_@"+l)
-					if not j+1 == len(self.graph):
-						tempfile.write(" & ")
-				if not i+2 == len(self.graph):
-					tempfile.write(") |\n")
-			tempfile.write(")\n\t\t)\n\t\t&\n\t\t(")
-			for i,m in enumerate(self.graph):
-				tempfile.write("!.@"+m+"_@"+n)
-				if not i+1 == len(self.graph):
+						tempfile.write(".@"+str(n)+"_@"+str(l))
 					tempfile.write(" & ")
-			tempfile.write(")\n\t)\n)\n&\n")
+				if not i+1 == len(self.graph):
+					tempfile.write(".@"+str(m)+"_@"+str(m)+") |\n")
+				else:
+					tempfile.write(".@"+str(m)+"_@"+str(m)+")\n")
+			tempfile.write(")\n&\n")
 
 		edges = [[n,m] for n in self.graph for m in self.graph[n]]
 		for n in edges:
