@@ -271,6 +271,8 @@ new_graph = Graph(gen=(8,2,1.1))""")
 
 	def solve(self):
 
+		orig = copy.deepcopy(self.graph)
+
 		core = False
 
 		while not core:
@@ -283,7 +285,8 @@ new_graph = Graph(gen=(8,2,1.1))""")
 
 			if returncode!=0:
 				print("I'm sorry, but CoReS wasn't able to solve your problem.")
-				exit()
+				self.graph = orig
+				return
 			else:
 				if result.startswith("% SATISFIABLE"):
 					self.__o_limboole(result)
