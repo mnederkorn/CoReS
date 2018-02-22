@@ -48,7 +48,7 @@ I.e.:
 for the graph:  
 ![example_graph](./example_graph.png)  
 
-Following that you can search the core graph with:  
+Following that you can search for the core graph with:  
 ```graph.solve()```  
 and subsequently generate an image of the core, or save it as a txt in the aforementioned format with:  
 ```
