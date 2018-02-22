@@ -1,12 +1,12 @@
 import random
 import re
 import subprocess
-import time
 import copy
 import os
 
 from graphviz import Digraph
 from tempfile import TemporaryFile
+from datetime import datetime
 from z3 import *
 
 class Graph:
@@ -141,7 +141,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 	def visualize(self, target_path=None):
 
 		if target_path == None:
-			target_path = os.path.dirname(os.path.realpath(__file__))+"\\images\\"+time.strftime("%Y%m%d%H%M%S",time.localtime())
+			target_path = os.path.dirname(os.path.realpath(__file__))+"\\images\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')
 
 		view = Digraph(format="png")
 
@@ -154,7 +154,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 				view.edge(n,m,label)
 
 		try:
-			view.render(filename=target_path, view=False, cleanup=True)
+			view.render(filename=target_path, view=True, cleanup=True)
 			return target_path
 		except Exception as e:
 			print(e)
@@ -163,7 +163,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 	def serialize(self, target_path=None):
 
 		if target_path == None:
-			target_path = os.path.dirname(os.path.realpath(__file__))+r"\\graphs\\"+time.strftime("%Y%m%d%H%M%S",time.localtime())+".txt"
+			target_path = os.path.dirname(os.path.realpath(__file__))+r"\\graphs\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')+".txt"
 
 		try:
 			file = open(target_path, "w")
