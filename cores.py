@@ -182,7 +182,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 		file.close()
 		return target_path
 
-	def _reduce(self, mappings):
+	def reduce(self, mappings):
 
 		mappings = [n for n in mappings if n[0]!=n[1]]
 
@@ -200,7 +200,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 				if n[1] in self.graph[m]:
 					self.graph[m][n[1]+"-"+n[0]] = self.graph[m].pop(n[1])
 
-	def _i_limboole(self):
+	def __i_limboole(self):
 
 		tempfile = TemporaryFile(mode="w+")
 
@@ -249,13 +249,13 @@ new_graph = Graph(gen=(8,2,1.1))""")
 
 		return result.returncode, result.stdout.decode()
 
-	def _o_limboole(self, result):
+	def __o_limboole(self, result):
 
 		mappings = re.findall(r".(@\d+(?:-\d+)*_@\d+(?:-\d+)*) = 1\r\n", result)
 
 		mappings = [[m.lstrip("@") for m in n.split("_")] for n in mappings]
 
-		self._reduce(mappings)
+		self.reduce(mappings)
 
 	def solve(self):
 
@@ -269,7 +269,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 				core = True
 				continue
 
-			returncode, result = self._i_limboole()
+			returncode, result = self.__i_limboole()
 
 			if returncode!=0:
 				print("I'm sorry, but CoReS wasn't able to solve your problem.")
@@ -277,11 +277,11 @@ new_graph = Graph(gen=(8,2,1.1))""")
 				return
 			else:
 				if result.startswith("% SATISFIABLE"):
-					self._o_limboole(result)
+					self.__o_limboole(result)
 				elif result.startswith("% UNSATISFIABLE"):
 					core = True
 
-	def _z3(self):
+	def __z3(self):
 
 		c = Context()
 
@@ -355,7 +355,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 		else:
 			return False
 
-		self._reduce(mappings)
+		self.reduce(mappings)
 
 		return True
 
@@ -365,7 +365,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 
 		while not core:
 
-			if self._z3():
+			if self.__z3():
 				continue
 			else:
 				core = True
