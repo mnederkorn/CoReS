@@ -154,7 +154,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 				view.edge(n,m,label)
 
 		try:
-			view.render(filename=target_path, view=True, cleanup=True)
+			view.render(filename=target_path, view=False, cleanup=True)
 			return target_path
 		except Exception as e:
 			print(e)
