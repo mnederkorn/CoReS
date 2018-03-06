@@ -5,6 +5,8 @@ Computation of  Retracts encoded as SMT/SAT
 
 To use CoReS without the GUI you need to install the following prerequisites:
 
+limboole:
+Download from http://fmv.jku.at/limboole/ and setup an according PATH for limboole
 z3py:  
 [Install as per their instructions, including the environmental variables.](https://github.com/Z3Prover/z3/wiki/Using-Z3Py-on-Windows)  
 graphviz (as in the Graphviz to Python interface):  
