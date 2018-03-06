@@ -155,7 +155,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 
 		try:
 			view.render(filename=target_path, view=False, cleanup=True)
-			return target_path
+			return target_path+".png"
 		except Exception as e:
 			print(e)
 			return
@@ -163,7 +163,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 	def serialize(self, target_path=None):
 
 		if target_path == None:
-			target_path = os.path.dirname(os.path.realpath(__file__))+r"\\graphs\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')+".txt"
+			target_path = os.path.dirname(os.path.realpath(__file__))+"\\graphs\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')+".txt"
 
 		try:
 			file = open(target_path, "w")
@@ -180,6 +180,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 			file.write(n+" "+m+" "+l+"\n")
 
 		file.close()
+
 		return target_path
 
 	def _reduce(self, mappings):
@@ -339,11 +340,6 @@ new_graph = Graph(gen=(8,2,1.1))""")
 		v1, v2 = Consts("v1 v2", V)
 		s.add(Exists(v1, (Not (Exists (v2, (v1==vmorph(v2)))))))
 		s.add(ForAll(v1, (Implies ((Exists (v2, v1==vmorph(v2))),(v1==vmorph(v1))))))
-
-		if not len(edges) == 0:
-			e1, e2 = Consts("e1 e2", E)
-
-			s.add(ForAll(e1, (Implies ((Exists (e2, e1==emorph(e2))),(e1==emorph(e1))))))
 
 		mappings = []
 

@@ -106,7 +106,7 @@ class Gui:
 
 		if self.from_text():
 			tmp = self.graph.visualize()
-			self.img = Image.open(tmp+".png")
+			self.img = Image.open(tmp)
 			self.re_render()
 		else:
 			return
