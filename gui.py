@@ -64,7 +64,7 @@ class Gui:
 		self.top.bind_all("<Control-Key-S>", self.save_file_as)
 		self.top.bind_all("<Control-Key-r>", self.render)
 		self.top.bind_all("<Control-Key-c>", self.get_core)
-		self.top.bind_all("<Control-Key-C>", self.get_core)
+		self.top.bind_all("<Control-Key-z>", self.get_core)
 
 		self.new_empty()
 
@@ -122,7 +122,7 @@ class Gui:
 		if self.scale >= 1:
 			self.canvas.config(width=max(self.top.winfo_screenwidth()/4,min(self.img_cache.width, self.top.winfo_screenwidth()/2**(1/2))), height=min(self.img_cache.height, self.top.winfo_screenheight()/2**(1/2)))
 
-	def get_core(self, e):
+	def get_core(self, *e):
 
 		if self.from_text():
 
@@ -140,10 +140,10 @@ class Gui:
 
 			self.top.update()
 
-			if (e.keysym == "c"):
-				self.graph.solve()
-			elif (e.keysym == "C"):
+			if (len(e) ==1 and e[0].keysym == "z"):
 				self.graph.z3solve()
+			else:
+				self.graph.solve()
 
 			l.destroy()
 
