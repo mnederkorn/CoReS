@@ -22,7 +22,7 @@ If you want to use the GUI as well, you need an up to date PIL fork, [such as Pi
 GUI mode's primary use is so simplify the interpretation and comparison of single graphs and their cores.
 You can load and save Graphs, as well as generate new ones or write your own in the textfield.
 Saving and starting a search for the core renders the current Graph in the textfield, but you can also manually trigger a re-Render with the Render button or Ctrl-r.
-To search for the core, use the Get Core button or Ctrl-c. Alternativly you can use Ctrl-z to try and find a core with the SMT-based z3py approach, but there is currently no know practical usecase for that.
+To search for the core, use the Get Core button or Ctrl-c. Alternativly you can use Ctrl-Shift-c to try and find a core with the SMT-based z3py approach, but there is currently no know practical usecase for that.
 Afterwards you can compare the core with the original graph, save your core-graph or further alter the core-graph and iterate.
 
 ## CLI:
