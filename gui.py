@@ -64,7 +64,7 @@ class Gui:
 		self.top.bind_all("<Control-Key-S>", self.save_file_as)
 		self.top.bind_all("<Control-Key-r>", self.render)
 		self.top.bind_all("<Control-Key-c>", self.get_core)
-		self.top.bind_all("<Control-Key-z>", self.get_core)
+		self.top.bind_all("<Control-Key-C>", self.get_core)
 
 		self.new_empty()
 
@@ -140,7 +140,7 @@ class Gui:
 
 			self.top.update()
 
-			if (len(e) ==1 and e[0].keysym == "z"):
+			if (len(e) == 1 and e[0].keysym == "C"):
 				self.graph.z3solve()
 			else:
 				self.graph.solve()
