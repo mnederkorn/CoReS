@@ -82,11 +82,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 	@staticmethod
 	def _parse_file(target_path):
 
-		try:
-			data = open(target_path, "r")
-		except Exception as e:
-			print(e)
-			return
+		data = open(target_path, "r")
 
 		return Graph._parse(data)
 
