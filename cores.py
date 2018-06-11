@@ -202,11 +202,7 @@ new_graph = Graph(gen=(8,2,1.1))""")
 		if target_path == None:
 			target_path = os.path.dirname(os.path.realpath(__file__))+"\\graphs\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')+".txt"
 
-		try:
-			file = open(target_path, "w")
-		except Exception as e:
-			print(e)
-			return
+		file = open(target_path, "w")
 
 		#Write all vertices to first line
 		for n in self.graph:
