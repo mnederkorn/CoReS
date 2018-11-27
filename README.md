@@ -82,14 +82,14 @@ for the graph:
 
 Once you have a Graph or HGraph object, you can calculate it's core:
 ```
-graph.solve()   #SAT based approach
-graph.z3solve() #SMT based approach
+g.solve()   #SAT based approach
+g.z3solve() #SMT based approach
 ``` 
 ### Visualizing and Serializing:
 To visualize or serialize any directed Graph or Hypergraph, core graph or not, you can use:
 ```
-graph.visualize(picture_path)
-graph.serialize(text_path)
+g.visualize(picture_path)
+g.serialize(text_path)
 ```
 You can also leave the paths blank, to save the image/text under:
 ```
