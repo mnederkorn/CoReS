@@ -8,3 +8,12 @@ format.py
 graph_sat_default.py
 graph_sat_definition.py
 graph_smt_default.py
+cores_bak.py
+coresh_undef.py
+ccq.py
+inv_chk.py
+__pycache__/*
+bin
+plot*
+bench*
+rules/
