@@ -157,9 +157,10 @@ class HGraph:
     #Image gets saved under a folder relative to this file and named according to the current time.
     #Parameter "view" controls whether the generated image should be shown upon generation.
     #Returns the filepath to the generated image.
-    def visualize(self, show=False):
+    def visualize(self, show=False, target_path=None):
 
-        target_path = os.path.dirname(os.path.realpath(__file__))+"\\himages\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')
+        if target_path == None:
+            target_path = os.path.dirname(os.path.realpath(__file__))+"\\himages\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')
 
         view = Gr(format="png", engine="neato")
         view.attr(overlap="false", outputorder="edgesfirst")
