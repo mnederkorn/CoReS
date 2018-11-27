@@ -411,8 +411,3 @@ def substitute(snippet):
         return tag
     else:
         return snippet
-
-if __name__ == '__main__':
-    
-    # g = HGraph(parse=r"C:\Users\Maxime\Documents\GitHub\CoReSH\hgraphs\2018-09-30-18-53-13-332566.txt")
-    g = HGraph(parse=r"C:\Users\Maxime\Documents\GitHub\CoReSH\hgraphs\hgraph6.txt")
