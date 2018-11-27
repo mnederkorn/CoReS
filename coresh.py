@@ -67,7 +67,7 @@ class HGraph:
         elif isinstance(target, _TemporaryFileWrapper):
             data = target
 
-        regex = re.fullmatch(r"V:(\n(?P<vertices>[a-z0-9_.]+( [a-z0-9_.]+)*))?\nL:(?P<labels>(\n[A-Z]+ \d+)*)\nE:(?P<edges>(\n[A-Z]+( [a-z0-9_.]+)*)*)", data.read())
+        regex = re.fullmatch(r"V:(\n(?P<vertices>[a-z0-9_.]+( [a-z0-9_.]+)*))?\nL:(?P<labels>(\n[a-zA-Z_]+ \d+)*)\nE:(?P<edges>(\n[a-zA-Z_]+( [a-z0-9_.]+)*)*)", data.read())
 
         if regex == None:
             raise Exception("The content of the input file does not match the required syntax. Please consult the github for advice.")
