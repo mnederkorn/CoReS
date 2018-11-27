@@ -1,7 +1,8 @@
 import os
 import copy
 
-from cores import Graph as graph
+from cores import Graph
+from coresh import HGraph
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
@@ -29,8 +30,13 @@ class Gui:
 		self.menubar.add_cascade(label="File", menu=self.filemenu)
 		self.top.config(menu=self.menubar)
 
+		self.mode = BooleanVar()
+		self.mode.set(False)
+
 		self.frame_left = Frame(self.top)
 		self.button_frame = Frame(self.frame_left)
+		self.graph_btn = Radiobutton(master=self.button_frame, text="Graph", variable=self.mode, value=False)
+		self.hgraph_btn = Radiobutton(master=self.button_frame, text="HGraph", variable=self.mode, value=True)
 		self.render_btn = Button(master=self.button_frame, command=self.render, text="Render")
 		self.core_btn = Button(master=self.button_frame, command=self.get_core, text="Get Core")
 		self.text = Text(master=self.frame_left, width=30, height=20, wrap=NONE, undo=True)
@@ -41,8 +47,16 @@ class Gui:
 		self.canvas = Canvas(master=self.top)
 		self.canvas.config(width=400)
 
-		self.render_btn.pack(side=LEFT, fill=X, expand=True)
-		self.core_btn.pack(side=RIGHT, fill=X, expand=True)
+		self.graph_btn.grid(row=1,column=0, sticky="nswe")
+		self.hgraph_btn.grid(row=1,column=1, sticky="nswe")
+		self.render_btn.grid(row=2,column=0, sticky="nswe")
+		self.core_btn.grid(row=2,column=1, sticky="nswe")
+
+		self.button_frame.columnconfigure(0, weight=1)
+		self.button_frame.columnconfigure(1, weight=1)
+		self.button_frame.rowconfigure(0, weight=1)
+		self.button_frame.rowconfigure(1, weight=1)
+
 		self.button_frame.grid(row=1, column=1, sticky="we")
 		self.text.grid(row=2, column=1, sticky="ns")
 		self.scrollx.grid(row=3, column=1, sticky="we")
@@ -81,13 +95,26 @@ class Gui:
 
 		self.text.delete(1.0,END)
 
-		if not self.graph == None:
+		if not self.mode.get():
 
-			for n in self.graph.graph:
-				self.text.insert(END, n+" ")
+			if not self.graph == None:
 
-			for (n,m,l) in [(n,m,l) for n in self.graph.graph for m in self.graph.graph[n] for l in self.graph.graph[n][m]]:
-				self.text.insert(END, "\n"+n+" "+m+" "+l)
+				for n in self.graph.graph:
+					self.text.insert(END, n+" ")
+
+				for (n,m,l) in [(n,m,l) for n in self.graph.graph for m in self.graph.graph[n] for l in self.graph.graph[n][m]]:
+					self.text.insert(END, "\n"+n+" "+m+" "+l)
+
+		else:
+
+			self.text.insert(END, "V:")
+			self.text.insert(END, "\n"+" ".join([n.name for n in self.graph.hgraph[0]]))
+			self.text.insert(END, "\nL:")
+			for n in {n.edge for n in self.graph.hgraph[1]}:
+				self.text.insert(END, "\n"+n.name+" "+str(n.size))
+			self.text.insert(END, "\nE:")
+			for n in self.graph.hgraph[1]:
+				self.text.insert(END, "\n"+" ".join([n.edge.name]+[m.name for m in n.args]))
 
 	def from_text(self):
 
@@ -95,7 +122,10 @@ class Gui:
 		tempfile.write(self.text.get("1.0",'end-1c'))
 		tempfile.seek(0)
 		try:
-			self.graph = graph(graph=graph._parse(tempfile))
+			if not self.mode.get():
+				self.graph = Graph(parse=tempfile)
+			else:
+				self.graph = HGraph(parse=tempfile)
 		except Exception as e:
 			messagebox.showerror("Error",e)
 			return False
@@ -140,10 +170,16 @@ class Gui:
 
 			self.top.update()
 
-			if (len(e) == 1 and e[0].keysym == "C"):
-				self.graph.z3solve()
+			if not self.mode.get():
+				if (len(e) == 1 and e[0].keysym == "C"):
+					self.graph.z3solve()
+				else:
+					self.graph.solve()
 			else:
-				self.graph.solve()
+				if (len(e) == 1 and e[0].keysym == "C"):
+					self.graph.z3solve()
+				else:
+					self.graph.solve()				
 
 			l.destroy()
 
@@ -167,7 +203,16 @@ class Gui:
 	def generate(self, nodes_n,labels_n,avg_out):
 
 		self.file = None
-		self.graph = graph(gen=(nodes_n,labels_n,avg_out))
+		self.graph = Graph(gen=(nodes_n,labels_n,avg_out))
+		self.title()
+		self.to_text()
+		self.scale=1.0
+		self.render()
+
+	def hgenerate(self, vertex_n, edge_n, avg_edge_args, connectivity):
+
+		self.file = None
+		self.graph = HGraph(gen=(vertex_n, edge_n, avg_edge_args, connectivity))
 		self.title()
 		self.to_text()
 		self.scale=1.0
@@ -175,34 +220,74 @@ class Gui:
 
 	def new_generate(self,*_):
 
-		top = Toplevel()
-		top.resizable(False, False)
-		top.title("Generate Graph")
-		nodes_lab = Label(top, text="Nodes #")
-		nodes_n = Spinbox(top, from_=1, to=sys.maxsize)
-		nodes_n.delete(0, 1)
-		nodes_n.insert(0, 8)
-		labels_lab = Label(top, text="Labels #", anchor="w")
-		labels_n = Spinbox(top, from_=1, to=sys.maxsize)
-		labels_n.delete(0, 1)
-		labels_n.insert(0, 2)
-		out_lab = Label(top, text="Avg. Edges per Node   ", anchor="w")
-		avg_out = Spinbox(top, from_=0, to=sys.maxsize, increment=0.05)
-		avg_out.delete(0, 4)
-		avg_out.insert(0, 1.1)
-		button = Button(top, text="Generate", command=lambda: [self.generate(int(nodes_n.get()),int(labels_n.get()),float(avg_out.get())), top.destroy()])
+		if self.mode.get() == False:
 
-		nodes_lab.grid(row=1,column=1,sticky="w")
-		labels_lab.grid(row=2,column=1,sticky="w")
-		out_lab.grid(row=3,column=1,sticky="w")
-		nodes_n.grid(row=1,column=2)
-		labels_n.grid(row=2,column=2)
-		avg_out.grid(row=3,column=2)
-		button.grid(row=4,column=1,columnspan=2,sticky="we")
+			top = Toplevel()
+			top.resizable(False, False)
+			top.title("Generate Graph")
+			nodes_lab = Label(top, text="Nodes #")
+			nodes_n = Spinbox(top, from_=1, to=sys.maxsize)
+			nodes_n.delete(0, 1)
+			nodes_n.insert(0, 8)
+			labels_lab = Label(top, text="Labels #", anchor="w")
+			labels_n = Spinbox(top, from_=1, to=sys.maxsize)
+			labels_n.delete(0, 1)
+			labels_n.insert(0, 2)
+			out_lab = Label(top, text="Avg. Edges per Node   ", anchor="w")
+			avg_out = Spinbox(top, from_=0, to=sys.maxsize, increment=0.05)
+			avg_out.delete(0, 4)
+			avg_out.insert(0, 1.1)
+			button = Button(top, text="Generate", command=lambda: [self.generate(int(nodes_n.get()),int(labels_n.get()),float(avg_out.get())), top.destroy()])
 
-		button.bind("<Return>", lambda _: [self.generate(int(nodes_n.get()),int(labels_n.get()),float(avg_out.get())), top.destroy()])
+			nodes_lab.grid(row=1,column=1,sticky="w")
+			labels_lab.grid(row=2,column=1,sticky="w")
+			out_lab.grid(row=3,column=1,sticky="w")
+			nodes_n.grid(row=1,column=2)
+			labels_n.grid(row=2,column=2)
+			avg_out.grid(row=3,column=2)
+			button.grid(row=4,column=1,columnspan=2,sticky="we")
 
-		button.focus()
+			button.bind("<Return>", lambda _: [self.generate(int(nodes_n.get()),int(labels_n.get()),float(avg_out.get())), top.destroy()])
+
+			button.focus()
+
+		else:
+
+			top = Toplevel()
+			top.resizable(False, False)
+			top.title("Generate Graph")
+
+			v_lab = Label(top, text="Vertices #")
+			v_n = Spinbox(top, from_=1, to=sys.maxsize)
+			v_n.delete(0, 1)
+			v_n.insert(0, 8)
+			pred_lab = Label(top, text="Edges #", anchor="w")
+			pred_n = Spinbox(top, from_=1, to=sys.maxsize)
+			pred_n.delete(0, 1)
+			pred_n.insert(0, 2)
+			arr_lab = Label(top, text="Avg. Arrity of Nodes   ", anchor="w")
+			avg_arr = Spinbox(top, from_=0, to=sys.maxsize, increment=0.1)
+			avg_arr.delete(0, 4)
+			avg_arr.insert(0, 2.5)
+			out_lab = Label(top, text="Avg. Edges per Node   ", anchor="w")
+			conn = Spinbox(top, from_=0, to=sys.maxsize, increment=0.05)
+			conn.delete(0, 4)
+			conn.insert(0, 0.5)
+			button = Button(top, text="Generate", command=lambda: [self.hgenerate(int(v_n.get()), int(pred_n.get()), float(avg_arr.get()), float(conn.get())), top.destroy()])
+
+			v_lab.grid(row=3,column=1,sticky="w")
+			pred_lab.grid(row=4,column=1,sticky="w")
+			arr_lab.grid(row=5,column=1,sticky="w")
+			out_lab.grid(row=6,column=1,sticky="w")
+			v_n.grid(row=3,column=2)
+			pred_n.grid(row=4,column=2)
+			avg_arr.grid(row=5,column=2)
+			conn.grid(row=6,column=2)
+			button.grid(row=7,column=1,columnspan=2,sticky="we")
+
+			button.bind("<Return>", lambda _: [self.hgenerate(int(v_n.get()), int(pred_n.get()), float(avg_arr.get()), float(conn.get())), top.destroy()])
+
+			button.focus()			
 
 		top.mainloop()
 
@@ -212,7 +297,10 @@ class Gui:
 
 		if file:
 			self.file=file
-			self.graph = graph(parse=file)
+			if not self.mode.get():
+				self.graph = Graph(parse=file)
+			else:
+				self.graph = HGraph(parse=file)
 			self.title()
 			self.to_text()
 			self.scale=1.0
@@ -246,10 +334,10 @@ class Gui:
 				return
 
 	def scroll_start(self, event):
-	    self.canvas.scan_mark(event.x, event.y)
+		self.canvas.scan_mark(event.x, event.y)
 
 	def scroll_move(self, event):
-	    self.canvas.scan_dragto(event.x, event.y, gain=1)
+		self.canvas.scan_dragto(event.x, event.y, gain=1)
 
 	def zoom(self, e):
 

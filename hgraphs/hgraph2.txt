@@ -1,0 +1,14 @@
+V:
+y_0 y_1 y_2 y_3 y_4 y_5 y_6
+L:
+P 2
+E:
+P y_0 y_1
+P y_2 y_1
+P y_4 y_1
+P y_0 y_3
+P y_2 y_3
+P y_4 y_3
+P y_0 y_5
+P y_2 y_5
+P y_4 y_6

@@ -1,0 +1,18 @@
+V:
+a_0 a_1 x_0 x_1 y_0 y_1 y_2 y_3 y_4 y_5 y_6 y_7
+L:
+P 1
+Q 3
+E:
+Q a_1 x_1 a_1
+Q x_1 x_0 a_1
+Q x_0 a_0 y_2
+P y_2
+Q y_2 x_1 x_1
+Q x_1 x_1 a_0
+Q x_1 a_1 x_1
+Q x_0 a_0 y_0
+Q x_1 x_1 x_0
+Q a_0 a_0 y_3
+Q a_1 a_1 a_1
+Q x_1 y_5 x_1
