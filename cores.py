@@ -4,6 +4,7 @@ import subprocess
 import copy
 import os
 import time
+import _io
 
 from graphviz import Digraph
 from tempfile import TemporaryFile, _TemporaryFileWrapper
@@ -19,7 +20,7 @@ class Graph:
         if not len(kwargs)==1 or not list(kwargs.keys()) <= ["parse", "copy", "gen", ]:
             raise Exception("You have to specify exactly one way to instantiate Graph at a time. Either parse or copy or generate a Graph:\ng = Graph(parse=r\"C:\CoReS\graphs\graph1.txt\")\nh = Graph(copy=g.graph)\ng = Graph(gen=(64,2,1))")
         elif "parse" in kwargs:
-            if (isinstance(kwargs["parse"], str) and os.path.isfile(kwargs["parse"])) or isinstance(kwargs["parse"], _TemporaryFileWrapper):
+            if (isinstance(kwargs["parse"], str) and os.path.isfile(kwargs["parse"])) or isinstance(kwargs["parse"], _TemporaryFileWrapper) or isinstance(kwargs["parse"], _io.TextIOWrapper):
                 self.graph = self._parse(kwargs["parse"])
             else:
                 raise Exception("The parameter parse has to be an absolute and valid filepath in the form of a string. E.g.: g = Graph(parse=r\"C:\CoReS\graphs\graph1.txt\")")
@@ -43,7 +44,7 @@ class Graph:
 
         if isinstance(target, str):
             data = open(target, "r")
-        elif isinstance(target, _TemporaryFileWrapper):
+        elif isinstance(target, _TemporaryFileWrapper) or isinstance(target, _io.TextIOWrapper):
             data = target
 
         #See if first line fits the specification
@@ -155,7 +156,7 @@ class Graph:
 
         #If no path given, use time dependant file placed relative to this file
         if target_path == None:
-            target_path = os.path.dirname(os.path.realpath(__file__))+"\\images\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')
+            target_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "images", datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f'))
 
         view = Digraph(format="png")
 
@@ -180,7 +181,7 @@ class Graph:
 
         #If no path given, use time dependant file placed relative to this file
         if target_path == None:
-            target_path = os.path.dirname(os.path.realpath(__file__))+"\\graphs\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')+".txt"
+            target_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "graphs", datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')+".txt")
 
         file = open(target_path, "w")
 
@@ -245,7 +246,7 @@ class Graph:
         tempfile.seek(0)
 
         #Prompt limboole with the generated formula and return the result with a PIPE
-        result = subprocess.run("limboole -s", stdin=tempfile, stdout=subprocess.PIPE, shell=True)
+        result = subprocess.run("limboole.exe -s", stdin=tempfile, stdout=subprocess.PIPE, shell=True)
 
         #Close tempfile
         tempfile.close()
@@ -257,7 +258,7 @@ class Graph:
     def _o_limboole(self, result):
 
         #Take all limboole-result assignments and only keep those that actually happen (i.e. = 1)
-        mappings = re.findall(r".(@\d+(?:-\d+)*_@\d+(?:-\d+)*) = 1\r\n", result)
+        mappings = re.findall(r".(@\d+(?:-\d+)*_@\d+(?:-\d+)*) = 1", result)
 
         #Format them from limboole output to our required format
         mappings = [[m.lstrip("@") for m in n.split("_")] for n in mappings]

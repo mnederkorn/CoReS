@@ -4,6 +4,7 @@ import subprocess
 import copy
 import os
 import scipy.stats
+import _io
 
 from graphviz import Graph as Gr
 from tempfile import TemporaryFile, _TemporaryFileWrapper
@@ -39,7 +40,7 @@ class HGraph:
         if not len(kwargs)==1 or not list(kwargs.keys()) <= ["parse", "copy", "gen", ]:
             raise Exception("You have to specify exactly one way to instantiate Graph at a time. Either parse or copy or generate a Graph:\ng = HGraph(parse=r\"C:\CoReS\hgraphs\hgraph1.txt\")\nh = HGraph(copy=g.hgraph)\ng = HGraph(gen=(64,2,2,1))")
         elif "parse" in kwargs:
-            if (isinstance(kwargs["parse"], str) and os.path.isfile(kwargs["parse"])) or isinstance(kwargs["parse"], _TemporaryFileWrapper):
+            if (isinstance(kwargs["parse"], str) and os.path.isfile(kwargs["parse"])) or isinstance(kwargs["parse"], _TemporaryFileWrapper) or isinstance(kwargs["parse"], _io.TextIOWrapper):
                 self.hgraph = self._parse(kwargs["parse"])
             else:
                 raise Exception("The parameter parse has to be an absolute and valid filepath in the form of a string. E.g.: g = HGraph(parse=r\"C:\CoReS\hgraphs\hgraph1.txt\")")
@@ -64,7 +65,7 @@ class HGraph:
         #For tools using this program as a submodule, it may be usefull to be able to parse from virtual files (TemporaryFile) instead of actual files.
         if isinstance(target, str):
             data = open(target, "r")
-        elif isinstance(target, _TemporaryFileWrapper):
+        elif isinstance(target, _TemporaryFileWrapper) or isinstance(target, _io.TextIOWrapper):
             data = target
 
         regex = re.fullmatch(r"V:(?P<vertices>(\n[a-z0-9_.]+( [a-z0-9_.]+)*)?)\nL:(?P<labels>(\n[a-zA-Z_]+ \d+)*)\nE:(?P<edges>(\n[a-zA-Z_]+( [a-z0-9_.]+)*)*)", data.read())
@@ -161,7 +162,7 @@ class HGraph:
     def visualize(self, show=False, target_path=None):
 
         if target_path == None:
-            target_path = os.path.dirname(os.path.realpath(__file__))+"\\himages\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')
+            target_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "himages", datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f'))
 
         view = Gr(format="png", engine="neato")
         view.attr(overlap="false", outputorder="edgesfirst")
@@ -185,7 +186,7 @@ class HGraph:
     def serialize(self, target_path=None):
 
         if target_path == None:
-            target_path = os.path.dirname(os.path.realpath(__file__))+"\\hgraphs\\"+datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')+".txt"
+            target_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "hgraphs", datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')+".txt")
 
         file = open(target_path, "w")
 
@@ -230,7 +231,7 @@ class HGraph:
 
         tempfile.seek(0)
 
-        result = subprocess.run("limboole -s", stdin=tempfile, stdout=subprocess.PIPE, shell=True)
+        result = subprocess.run("limboole.exe -s", stdin=tempfile, stdout=subprocess.PIPE, shell=True)
 
         tempfile.close()
 

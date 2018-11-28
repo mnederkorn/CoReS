@@ -17,3 +17,7 @@ bin
 plot*
 bench*
 rules/
+graphs/!graph*
+hgraphs/!hgraph*
+images/
+himages/
