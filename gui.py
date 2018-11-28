@@ -108,7 +108,8 @@ class Gui:
 		else:
 
 			self.text.insert(END, "V:")
-			self.text.insert(END, "\n"+" ".join([n.name for n in self.graph.hgraph[0]]))
+			if self.graph.hgraph[0]:
+				self.text.insert(END, "\n"+" ".join([n.name for n in self.graph.hgraph[0]]))
 			self.text.insert(END, "\nL:")
 			for n in {n.edge for n in self.graph.hgraph[1]}:
 				self.text.insert(END, "\n"+n.name+" "+str(n.size))

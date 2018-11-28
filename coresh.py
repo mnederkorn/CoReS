@@ -67,7 +67,7 @@ class HGraph:
         elif isinstance(target, _TemporaryFileWrapper):
             data = target
 
-        regex = re.fullmatch(r"V:(\n(?P<vertices>[a-z0-9_.]+( [a-z0-9_.]+)*))?\nL:(?P<labels>(\n[a-zA-Z_]+ \d+)*)\nE:(?P<edges>(\n[a-zA-Z_]+( [a-z0-9_.]+)*)*)", data.read())
+        regex = re.fullmatch(r"V:(?P<vertices>(\n[a-z0-9_.]+( [a-z0-9_.]+)*)?)\nL:(?P<labels>(\n[a-zA-Z_]+ \d+)*)\nE:(?P<edges>(\n[a-zA-Z_]+( [a-z0-9_.]+)*)*)", data.read())
 
         if regex == None:
             raise Exception("The content of the input file does not match the required syntax. Please consult the github for advice.")
@@ -76,7 +76,9 @@ class HGraph:
         labels = regex.group("labels")
         edges = regex.group("edges")
 
-        vertices = re.split(" ", vertices)
+        vertices = re.split(" ", vertices.lstrip("\n"))
+        if vertices == [""]:
+            vertices = []
         if not _unique_list(vertices):
             raise Exception("There can be no repetition in the listing of the vertices, they have to be unique.")
 
