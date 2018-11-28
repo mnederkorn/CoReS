@@ -10,7 +10,9 @@ Download from http://fmv.jku.at/limboole/ and setup an according PATH for limboo
 z3py:  
 [Install as per their instructions, including the environmental variables.](https://github.com/Z3Prover/z3/wiki/Using-Z3Py-on-Windows)  
 graphviz (as in the Graphviz to Python interface):  
-[Install as per their instructions, including underlying actual Graphviz Software.](https://github.com/xflr6/graphviz)
+[Install as per their instructions, including underlying actual Graphviz Software.](https://github.com/xflr6/graphviz)  
+scipy:  
+```pip install scipy```
 
 If you want to use the GUI as well, you need an up to date PIL fork, [such as Pillow](https://pypi.python.org/pypi/Pillow/5.0.0):  
 ```pip install pillow```
