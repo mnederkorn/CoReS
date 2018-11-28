@@ -83,11 +83,7 @@ class Graph:
             #Cut off (optional) rightmost \n and split the string into an array of strings with an entry for each edge
             edges = edges.rstrip("\n").split("\n")
 
-            #Check for further error of not all edges being distinct to each other
-            for i,n in enumerate(edges):
-                if n in edges[i+1:len(edges)]:
-                    data.close()
-                    raise Exception("Each edge has to be distinct")
+            edges = set(edges)
             
             #Split each edge into an array of its source vertex, target vertex and label.
             edges = [n.split() for n in edges]

@@ -91,8 +91,7 @@ class HGraph:
         edges = re.split("\n", edges.lstrip("\n"))
         if edges == [""]:
             edges = []
-        if not _unique_list(edges):
-            raise Exception("There can be no repetition in the listing of the edges, they have to be unique. Multiedges are not allowed.")
+        edges = set(edges)
         edges = [n.split() for n in edges]
         for n in edges:
             if not n[0] in labels:
