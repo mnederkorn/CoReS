@@ -107,15 +107,20 @@ class Gui:
 
 		else:
 
-			self.text.insert(END, "V:")
-			if self.graph.hgraph[0]:
-				self.text.insert(END, "\n"+" ".join([n.name for n in self.graph.hgraph[0]]))
-			self.text.insert(END, "\nL:")
-			for n in {n.edge for n in self.graph.hgraph[1]}:
-				self.text.insert(END, "\n"+n.name+" "+str(n.size))
-			self.text.insert(END, "\nE:")
-			for n in self.graph.hgraph[1]:
-				self.text.insert(END, "\n"+" ".join([n.edge.name]+[m.name for m in n.args]))
+			if not self.graph == None:
+
+				self.text.insert(END, "V:")
+				if self.graph.hgraph[0]:
+					self.text.insert(END, "\n"+" ".join([n.name for n in self.graph.hgraph[0]]))
+				self.text.insert(END, "\nL:")
+				for n in {n.edge for n in self.graph.hgraph[1]}:
+					self.text.insert(END, "\n"+n.name+" "+str(n.size))
+				self.text.insert(END, "\nE:")
+				for n in self.graph.hgraph[1]:
+					self.text.insert(END, "\n"+" ".join([n.edge.name]+[m.name for m in n.args]))
+
+			else:
+				self.text.insert(END, "V:\nL:\nE:")
 
 	def from_text(self):
 
@@ -269,11 +274,11 @@ class Gui:
 			arr_lab = Label(top, text="Avg. Arrity of Nodes   ", anchor="w")
 			avg_arr = Spinbox(top, from_=0, to=sys.maxsize, increment=0.1)
 			avg_arr.delete(0, 4)
-			avg_arr.insert(0, 2.5)
+			avg_arr.insert(0, 2)
 			out_lab = Label(top, text="Avg. Edges per Node   ", anchor="w")
 			conn = Spinbox(top, from_=0, to=sys.maxsize, increment=0.05)
 			conn.delete(0, 4)
-			conn.insert(0, 0.5)
+			conn.insert(0, 1)
 			button = Button(top, text="Generate", command=lambda: [self.hgenerate(int(v_n.get()), int(pred_n.get()), float(avg_arr.get()), float(conn.get())), top.destroy()])
 
 			v_lab.grid(row=3,column=1,sticky="w")
