@@ -151,7 +151,7 @@ class Graph:
                 print(src)
 
     #Visualize graph object with Graphviz
-    def visualize(self, target_path=None):
+    def visualize(self, target_path=None, color=None):
         #Digraph, node, edge and render are graphviz functions
 
         #If no path given, use time dependant file placed relative to this file
@@ -160,14 +160,21 @@ class Graph:
 
         view = Digraph(format="png")
 
+
         #Add all nodes and edges to visualization
         for n in self.graph:
-            view.node(n)
+            if color and str(n) in color[0]:
+                view.node(n, color=color[0][str(n)])
+            else:
+                view.node(n)
             for m in self.graph[n]:
                 label = ""
                 for l in sorted(self.graph[n][m]):
                     label += l
-                view.edge(n,m,label)
+                if color and ".".join((n,m,label)) in color[1]:
+                    view.edge(n,m,label, color=color[1][".".join((n,m,label))])
+                else:
+                    view.edge(n,m,label)
         try:
             #Try to render at target_path+".png" (because Digraph(format="png")) and delete intermediate file used by graphviz at target_path (cleanup=True)
             view.render(filename=target_path, view=False, cleanup=True)
