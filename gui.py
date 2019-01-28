@@ -37,6 +37,8 @@ class Gui:
 		self.button_frame = Frame(self.frame_left)
 		self.graph_btn = Radiobutton(master=self.button_frame, text="Graph", variable=self.mode, value=False)
 		self.hgraph_btn = Radiobutton(master=self.button_frame, text="HGraph", variable=self.mode, value=True)
+		self.persistence = IntVar()
+		self.persistence_btn = Checkbutton(master=self.button_frame, text="Save renders in CoReS\\images", variable=self.persistence)
 		self.render_btn = Button(master=self.button_frame, command=self.render, text="Render")
 		self.core_btn = Button(master=self.button_frame, command=self.get_core, text="Get Core")
 		self.text = Text(master=self.frame_left, width=30, height=20, wrap=NONE, undo=True)
@@ -49,8 +51,9 @@ class Gui:
 
 		self.graph_btn.grid(row=1,column=0, sticky="nswe")
 		self.hgraph_btn.grid(row=1,column=1, sticky="nswe")
-		self.render_btn.grid(row=2,column=0, sticky="nswe")
-		self.core_btn.grid(row=2,column=1, sticky="nswe")
+		self.persistence_btn.grid(row=2,column=0, sticky="nswe", columnspan="2")
+		self.render_btn.grid(row=3,column=0, sticky="nswe")
+		self.core_btn.grid(row=3,column=1, sticky="nswe")
 
 		self.button_frame.columnconfigure(0, weight=1)
 		self.button_frame.columnconfigure(1, weight=1)
@@ -143,6 +146,12 @@ class Gui:
 		if self.from_text():
 			tmp = self.graph.visualize()
 			self.img = Image.open(tmp)
+			self.img.load()
+			if not self.persistence.get():
+				try:
+					os.remove(tmp)
+				except Exception as e:
+					pass
 			self.re_render()
 		else:
 			return
